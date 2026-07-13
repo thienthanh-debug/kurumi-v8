@@ -1,0 +1,282 @@
+{
+  "main": {
+    "id": "9cb0c79d73584ac0",
+    "type": "split",
+    "children": [
+      {
+        "id": "c8cf8d69773cda41",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d6943c57c40790d2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "07-ADR/ADR-00X.md.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ADR-00X.md"
+            }
+          },
+          {
+            "id": "584c20ec0772b18a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "00-FOUNDATION/Foundation/FOUNDATION-003 - What is Architecture.md.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "FOUNDATION-003 - What is Architecture.md"
+            }
+          },
+          {
+            "id": "c1b49a2d1e298f26",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "08-REFLECTION/Mistakes/Mistake — Premature Freeze.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Mistake — Premature Freeze"
+            }
+          },
+          {
+            "id": "9428f74f9546af6e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Untitled.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "798007a93c7d44ab",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "09-PROJECTS/Inventory Refactoring Project Alpha/00-Mission.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "00-Mission"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5d9cbe8c9c7023da",
+    "type": "split",
+    "children": [
+      {
+        "id": "b906756a7df6bb28",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "452dcba87760fd21",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "eb138e350be8bc87",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "ab4d5bd97866c174",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 377.5
+  },
+  "right": {
+    "id": "13cc959a2f83d49d",
+    "type": "split",
+    "children": [
+      {
+        "id": "1757811b33130312",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "14614d07d4b54e58",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "00-FOUNDATION/Infrastructure-Contract-Pattern.md.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Infrastructure-Contract-Pattern.md"
+            }
+          },
+          {
+            "id": "03db3d1449fdfca1",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "00-FOUNDATION/Infrastructure-Contract-Pattern.md.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Infrastructure-Contract-Pattern.md"
+            }
+          },
+          {
+            "id": "55fd4a347235ab38",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "dd41ace006b19e3a",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "28ae69714f6cdaf2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "00-FOUNDATION/Infrastructure-Contract-Pattern.md.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Infrastructure-Contract-Pattern.md"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "798007a93c7d44ab",
+  "lastOpenFiles": [
+    "09-PROJECTS/Inventory Refactoring Project Alpha/01-Reality_and_Domain.md",
+    "09-PROJECTS/Inventory Refactoring Project Alpha/00-Mission.md",
+    "08-REFLECTION/Sprint/2026-07-12-Inventory-Refactoring-Trigger.md.md",
+    "09-PROJECTS/Inventory Refactoring Project Alpha",
+    "09-PROJECTS",
+    "python/src/builder/__pycache__/init_alpha.cpython-314.pyc",
+    "python/src/builder/init_alpha.py",
+    "python/src/builder/scaffold_project_alpha.py",
+    "08-REFLECTION/Discovery/Discovery — Scope.md.md",
+    "08-REFLECTION/Untitled 1",
+    "08-REFLECTION/Mistakes/Mistake-MERGED-DRAFT.md",
+    "08-REFLECTION/Sprint",
+    "01-GOVERNANCE/Constitution/README.md.md",
+    "README.md.md",
+    "01-GOVERNANCE/Constitution/V8-Constitution.md",
+    "01-GOVERNANCE/Constitution/01-Runtime-Constitution.md.md",
+    "01-GOVERNANCE/Constitution/00-Kurumi-Constitution.md.md",
+    "00-FOUNDATION/Foundation-Validation.md.md",
+    "00-FOUNDATION/Foundation-README.md.md",
+    "00-FOUNDATION/Foundation-Index.md.md",
+    "00-CONTEXT/ReadEngine.context.md.md",
+    "00-CONTEXT/Sprint02.context.md.md",
+    "Thanh 01-PROJECT REPORT.md",
+    "08-REFLECTION/Mistakes/Mistake — Wrong Abstraction.md.md",
+    "08-REFLECTION/Mistakes/Mistake — Over Engineering.md.md",
+    "08-REFLECTION/Mistakes/Mistake — Ontology Explosion.md.md",
+    "08-REFLECTION/Mistakes/Mistake — Boundary Leak.md.md",
+    "08-REFLECTION/Mistakes/Mistake  Serialization vs Artifact  Resolved.md.md",
+    "08-REFLECTION/Mistakes/Mistake  Role vs Language  Resolved.md.md",
+    "08-REFLECTION/Mistakes/Mistake  Module vs State  Resolved.md.md",
+    "08-REFLECTION/Mistakes/Mistake  Gate is Truth  Resolved.md.md",
+    "HANDOFF — Kurumi V8.md.md",
+    "python/src/builder/__pycache__/mistake_merger.cpython-314.pyc",
+    "python/src/builder/__pycache__/__init__.cpython-314.pyc",
+    "python/src/builder/__pycache__",
+    "10-EPISTEMOLOGY/EPISTEMOLOGY-009 Control Mechanism.md.md"
+  ]
+}
