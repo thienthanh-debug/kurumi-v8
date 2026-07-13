@@ -2,8 +2,8 @@
 
 Kurumi ERP V8 — Inventory Engine
 **Ngày:** 2026-07-13
-**Trạng thái:** Draft — chờ Thanh duyệt trước khi khung Code triển khai
-**Revision:** Rev.3 (hợp nhất Rev.1 + Rev.2 WARNING/PPV + Rev.3 Location)
+**Trạng thái:** Ready — hết phụ thuộc Thanh, sẵn sàng giao Gemini/khung Code triển khai
+**Revision:** Rev.4 (Final — đóng nốt Formula Audit, không còn câu hỏi treo)
 
 Liên quan: [[01-Runtime-Constitution]] — lưu ý: mục "WAIT_REVIEW is the boundary between Human Workflow and Engine Workflow" của Constitution mô tả WAIT_REVIEW là bắt buộc cho mọi giao dịch (hành vi cũ). Spec này (Mục 2) thay đổi hành vi đó thành exception-based (WARNING mới vào WAIT_REVIEW). Chưa sửa Constitution — cần Thanh xác nhận và tự cập nhật câu chữ Constitution nếu đồng ý, ngoài phạm vi file này.
 
@@ -111,24 +111,28 @@ Quy tắc chung ghi vào Constitution: **"Thiếu Master Data cần cho Validate
 - Interim: `VALIDATE_FAIL_INVALID_LOCATION` tạm ngưng trigger, giữ nguyên mã lỗi cho tương lai (không xóa khỏi Constitution), đánh dấu TODO trong code — xem Mục 5 bước 1.
 - Điều kiện mở lại: khi Reality (phân tích luồng kho thật) xác nhận cần phân biệt ≥2 vị trí — lúc đó tạo `LOCATION_MASTER` là quyết định kiến trúc tự nhiên, không phải vá.
 
-**Còn treo thật sự, chưa ai trả lời:**
+**Đã đóng (2026-07-13):**
 
-- Bản Excel (`KURUMI_INVENTORY_ENGINE.xlsx`) dùng để phân tích bug `PREP_LOG`/`STOCK_INPUT_LOG` (formula chạy full ~1000 dòng) có thể đã cũ hơn Google Sheet thật đang chạy. Cần Thanh mở Google Sheet thật, kiểm tra lại range công thức 2 sheet này còn đúng như báo cáo không, trước khi Code sửa theo Mục 7 (Formula Audit).
+- ~~Bản Excel có thể cũ hơn Google Sheet thật~~ — Thanh đã tự kiểm tra trực tiếp trên Google Sheet thật và đã sửa lại range công thức cho `PREP_LOG`/`STOCK_INPUT_LOG` (không còn chạy full ~1000 dòng). Formula Audit (Mục 7) coi như hoàn tất cho 2 sheet này, không còn là việc của Code nữa.
 
 **Đã trả lời xong:**
 
 - ~~Ngưỡng WARNING cho PPV~~ — đã hủy, xem Mục 4.
 - ~~PRODUCTION_LOG có cần Status Flag mới~~ — đã hủy, giữ nguyên, xem Mục 4.
 
+**→ Mục 6 hết câu hỏi treo.** Toàn bộ phần còn lại của Spec (Risk Assessment, Cleanup, hợp nhất Snapshot ID, ReadInfrastructure) sẵn sàng cho Code triển khai, không còn phụ thuộc gì từ Thanh.
+
 ---
 
-## 7. Ghi chú Formula Audit (Bước 3, song song với đợt sửa State Machine này)
+## 7. Ghi chú Formula Audit (Bước 3) — ĐÃ HOÀN TẤT (2026-07-13)
 
-Kiểm tra trực tiếp trên file thật (2026-07-13):
+Trạng thái cuối, Thanh đã tự kiểm tra + sửa trực tiếp trên Google Sheet thật:
 
-- `PREP_LOG`: 5 cột formula (D,G,J,K,L) chạy full `...2:...1000` — cần sửa.
-- `STOCK_INPUT_LOG`: 6 cột formula (C,E,F,G,K,O) chạy full `...2:...1004` — cần sửa, cùng lỗi với PREP_LOG.
-- `PRODUCTION_LOG`: toàn bộ formula đã giới hạn đúng `...2:...50` — đã tối ưu, không cần sửa.
+- `PREP_LOG`: đã sửa range, không còn chạy full `...2:...1000`.
+- `STOCK_INPUT_LOG`: đã sửa range, không còn chạy full `...2:...1004`.
+- `PRODUCTION_LOG`: vốn đã tối ưu sẵn (`...2:...50`) từ đầu, không cần sửa.
+
+Formula Audit cho 3 sheet trong phạm vi đợt này coi như xong, Code không cần động vào phần này nữa.
 
 ---
 
@@ -137,6 +141,7 @@ Kiểm tra trực tiếp trên file thật (2026-07-13):
 - **Rev.1** (2026-07-13): Bản gốc — Risk Assessment 3 nhánh (NORMAL/WARNING/CRITICAL), thay thế WAIT_REVIEW bắt buộc cho mọi giao dịch.
 - **Rev.2** (2026-07-13): Chốt WARNING chỉ còn 1 nguồn (PREP_LOG Status Flag), hủy PPV threshold và PRODUCTION_LOG Status Flag mới. Phát hiện Semantic Drift giữa `LOCATION_MASTER` (giả định trong code) và `PLACEMENT_MASTER` (sheet thật) — xác nhận đây là 2 khái niệm khác Domain, không phải lỗi đặt tên.
 - **Rev.3** (2026-07-13): Chốt không tạo `LOCATION_MASTER` khi chưa có Reality chứng minh cần (nguyên tắc "Reality trước, Entity sau" — FOUNDATION-003/004). `VALIDATE_FAIL_INVALID_LOCATION` tạm ngưng trigger thay vì Fail Closed vào một sheet chưa tồn tại trong Reality.
+- **Rev.4 — Final** (2026-07-13): Đóng nốt câu hỏi treo cuối cùng — Thanh tự kiểm tra Google Sheet thật, xác nhận và sửa trực tiếp range formula `PREP_LOG`/`STOCK_INPUT_LOG` (Mục 7). Không còn việc gì cần Thanh xác nhận thêm (Mục 6 trống). Trạng thái spec chuyển Draft → Ready, giao cho Gemini/khung Code triển khai.
 
 ---
 
