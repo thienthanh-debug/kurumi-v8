@@ -34,3 +34,5 @@ Module có thể gọi nhiều State.
 ## Consequence
 
 Không dùng Module để thay thế State.
+
+Liên quan: [[Mistake  Module vs State  Resolved]]

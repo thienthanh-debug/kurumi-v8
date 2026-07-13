@@ -13,3 +13,5 @@ History là gì?
 Review là gì?
 
 Lifetime từng Object?
+
+Liên quan: [[Sprint O4 Ready]] (checkpoint đặt Mission này làm trọng tâm Sprint O4)

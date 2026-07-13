@@ -63,3 +63,5 @@ Workflow Gate phải đứng ngoài AI.
 Sprint O3 đóng băng Meta Architecture.
 
 Implementation sẽ bắt đầu ở Sprint O4.
+
+Liên quan: [[Sprint O4 Ready]] (tiếp nối)

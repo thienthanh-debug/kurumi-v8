@@ -13,3 +13,5 @@ Batch
 Mission
 
 Workflow Gate phải kiểm Scope.
+
+Liên quan: [[EPISTEMOLOGY-006 Mission & Authority]]

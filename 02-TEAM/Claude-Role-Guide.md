@@ -47,6 +47,7 @@ Nếu có Principle mới → cô đọng và đề xuất lưu vào Constitutio
 
 - [[V8-Constitution]]
 - [[GPT-Design-Retrospective]]
+- [[Claude-Bootstrap]] — bối cảnh Runtime/Claude Code (CLI), khác phiên chat-collaboration mà file này mô tả
 - Audit
 
 Discovery

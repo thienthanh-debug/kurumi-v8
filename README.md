@@ -1,5 +1,7 @@
 # Kurumi OS — Start Here
 
+Nếu bạn là Claude Code (CLI) làm việc trực tiếp trên repo này, đọc [[CLAUDE]] trước — đó là cửa vào riêng cho Runtime/Implementation, khác với hướng dẫn chat-collaboration bên dưới.
+
 Foundation là tầng cao nhất của Kurumi OS. Không chỉnh sửa trực tiếp. Không được tạo Foundation mới. Foundation chỉ được Freeze khi Reality chứng minh.
 
 Mọi Architecture ↓ mọi Specification ↓ mọi Code đều phải truy ngược về Foundation.

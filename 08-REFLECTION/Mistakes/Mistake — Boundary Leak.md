@@ -63,3 +63,5 @@ Không sinh ontology
 nếu Foundation
 đã đủ.
 ```
+
+Liên quan: [[EPISTEMOLOGY-003 - What is Validation]] (bug "Validation làm Diagnosis" được mô tả chi tiết ở đây, mục Boundary)

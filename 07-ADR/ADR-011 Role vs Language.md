@@ -13,3 +13,5 @@ JSON
 ...
 
 Language chỉ là serialization.
+
+Liên quan: [[Mistake  Role vs Language  Resolved]]

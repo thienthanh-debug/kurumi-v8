@@ -19,3 +19,5 @@ Review
 Test
 
 Freeze
+
+Liên quan: [[EPISTEMOLOGY-009 Control Mechanism]]

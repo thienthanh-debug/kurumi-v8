@@ -9,3 +9,5 @@
 - Receive (Nhập hàng)
 - Prep (Sơ chế)
 - Waste (Hư hỏng)
+
+Liên quan: [[Sprint O4 Ready]] (kiến trúc mục tiêu Workspace/Transaction/Ledger/Read Model cho project này)

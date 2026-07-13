@@ -17,6 +17,6 @@ Cause
 
 Reference
 
-[[EPIS-005]]
+[[EPISTEMOLOGY-005 - Priority and Heuristic Search]]
 
-[[FOUNDATION-002]]
+[[FOUNDATION-002 - What is Principle]]
