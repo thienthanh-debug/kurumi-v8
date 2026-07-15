@@ -369,3 +369,10 @@ Priority không phải Entity.
 Priority không phải Module.
 Priority là thuộc tính nội tại của Principle.
 ```
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+- [[Mistake — Wrong Abstraction]] — bài học "Heuristic Priority, không phải Probability" bắt nguồn trực tiếp từ định nghĩa Principle ở đây (không phải SOP/Rule cứng, không tính phần trăm).
+- [[EPISTEMOLOGY-005 - Priority and Heuristic Search]] — mở rộng: Principle có 2 chức năng (điều khiển Action + điều hướng Learning), phát hiện ở Sprint O2, không phải Principle mới.

@@ -174,3 +174,12 @@ Tức là...
 **Identity có trước Function.**
 
 Và đó chính là lớp đá mẹ mà FOUNDATION-005 vẫn đang tiếp tục đào.
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+Chưa có sự kiện nào đóng được câu hỏi này — vẫn đúng như trạng thái NOT FROZEN ở trên:
+
+- [[EPISTEMOLOGY-000]] (Mục 6, Backlog #1) — "Định nghĩa 'System' — node giữa Schema và Asset trong Layer 1, chưa từng được đóng băng chính thức."
+- [[Sprint O2 — Freeze Checkpoint]] (Mục 3, Backlog #1) — cùng câu hỏi, liệt kê lại nguyên văn để "không được để trôi quên như 'System' từng bị."

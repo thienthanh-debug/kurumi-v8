@@ -189,3 +189,10 @@ Experience còn quyết định khả năng định hướng Learning Engine.
 Experience càng dày,
 Search Radius càng chính xác.
 ```
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+- [[EPISTEMOLOGY-000]] — toàn bộ Layer 2 (Observation → Information → Validation → Adjustment) là cơ chế vận hành của chính Experience → Principle mô tả ở đây, không phải khái niệm mới.
+- [[Sprint O2 — Freeze Checkpoint]] — kết quả Frozen của một chu kỳ Experience thật (case cà rốt, espresso, Food Cost) chuyển hóa thành Principle.

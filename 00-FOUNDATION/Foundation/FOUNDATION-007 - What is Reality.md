@@ -302,3 +302,9 @@ Scope lớn
 
 Scope của Reality quyết định Search Radius của Learning Engine.
 ```
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+- [[ADR-016 Compiler Never Silences Reality]] — trích trực tiếp "Nếu ERP khác Reality, thì ERP sai. Không phải Reality sai." để sửa `PREP_COMPILER` đang âm thầm lọc bỏ batch `LOW YIELD`/`OVER YIELD` trước khi Engine kịp thấy — ví dụ cụ thể của "ERP records Business Events... không phải phán đoán về Reality."

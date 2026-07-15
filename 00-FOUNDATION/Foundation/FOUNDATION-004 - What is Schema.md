@@ -280,3 +280,9 @@ Schema là nơi Architecture kết thúc.
 > **Architecture thinks.**
 > 
 > **Schema materializes.**
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+- [[Validation-Decision-Spec-V1]] (Mục 6) — trích nguyên văn "Schema không phát minh, Schema chỉ hiện hình" để quyết định KHÔNG tạo `LOCATION_MASTER` khi chưa có Reality (phân tích luồng kho thật) chứng minh cần — ví dụ cụ thể nhất của Validation Test Mục 4 file này ("Reality nào sẽ đi qua Schema này? Nếu không có Reality, Schema chết").

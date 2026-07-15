@@ -150,3 +150,9 @@ READ-INF-006 là Asset không phải vì nó là Markdown. Mà vì nó bảo t�
 > _Physical Truth must never be interpreted._
 
 Đó cũng là lý do tại sao `""` quan trọng hơn `null` — không phải về code, mà về Experience được bảo tồn.
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+- [[Flag — SessionRAM Persistence across WAIT_REVIEW]] và [[Flag — Compiler Automation vs Frozen Contract]] — cả hai được tạo đúng vì lý do FOUNDATION-006 nêu: không phải để lưu hay sưu tầm, mà để Mission tương lai không phải khám phá lại từ đầu ("Asset tồn tại để System tiếp tục tiến hóa").

@@ -307,3 +307,9 @@ Không có ERP.
 Không có Obsidian.
 
 Chỉ có ba khái niệm nền tảng quyết định toàn bộ hệ thống về sau.
+
+---
+
+## Dẫn chứng thực tế (2026-07-14)
+
+- [[Validation-Decision-Spec-V1]] (Rev.3, Revision History) — quyết định không tạo `LOCATION_MASTER` khi chưa có Reality chứng minh cần, trích trực tiếp nguyên tắc "Reality trước, Entity sau" từ FOUNDATION-003/004.
