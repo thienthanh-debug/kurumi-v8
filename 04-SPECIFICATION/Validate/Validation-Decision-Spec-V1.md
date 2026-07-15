@@ -2,8 +2,8 @@
 
 Kurumi ERP V8 — Inventory Engine
 **Ngày:** 2026-07-13
-**Trạng thái:** Ready — hết phụ thuộc Thanh, sẵn sàng giao Gemini/khung Code triển khai
-**Revision:** Rev.4 (Final — đóng nốt Formula Audit, không còn câu hỏi treo)
+**Trạng thái:** FROZEN 🔒 (2026-07-14 — Thanh xác nhận, Coverage Matrix 9/9)
+**Revision:** Rev.5 — Frozen
 
 Liên quan: [[01-Runtime-Constitution]] — lưu ý: mục "WAIT_REVIEW is the boundary between Human Workflow and Engine Workflow" của Constitution mô tả WAIT_REVIEW là bắt buộc cho mọi giao dịch (hành vi cũ). Spec này (Mục 2) thay đổi hành vi đó thành exception-based (WARNING mới vào WAIT_REVIEW). Chưa sửa Constitution — cần Thanh xác nhận và tự cập nhật câu chữ Constitution nếu đồng ý, ngoài phạm vi file này.
 
@@ -136,12 +136,35 @@ Formula Audit cho 3 sheet trong phạm vi đợt này coi như xong, Code không
 
 ---
 
+## 8. Coverage Matrix — Reality Test (2026-07-14)
+
+| Rule | Kết quả | Evidence |
+|---|:---:|---|
+| Missing Event ID | ✅ PASS | ERROR_LOG |
+| Missing Transaction ID | ✅ PASS | ERROR_LOG |
+| Missing Item Code | ✅ PASS | ERROR_LOG, transactionId `HA-PREP-260712-02-CONS-3`, context xác nhận `itemCode` rỗng |
+| Missing Qty / Not Number | ✅ PASS | Case Brown Rice (trước khi có Allow Unknown Output) |
+| Qty = 0 | ✅ PASS | ERROR_LOG dòng 25, `VALIDATE_FAIL_ZERO_QTY` |
+| Invalid Item | ✅ PASS | ERROR_LOG (2 bằng chứng độc lập) |
+| Duplicate Transaction | ✅ PASS | ERROR_LOG (3 bằng chứng độc lập, gồm cả lần chặn đúng do Idempotency Guard) |
+| Allow Unknown Output | ✅ PASS | `INVENTORY_LEDGER` batch `DN-PREP-260712-07`, Qty = 5.100 khớp `Expected Output`; Snapshot gốc vẫn rỗng (không mutate); không có `NOT_A_NUMBER` trong lần chạy này |
+| WARNING Flow (routing) | ✅ PASS | LOW YIELD → WAIT_REVIEW → Approved → COMMIT → Ledger |
+
+**9/9 — Coverage Matrix đóng hoàn toàn.** Toàn bộ Risk Assessment 3 nhánh, Cleanup dọn Staging, hợp nhất Snapshot ID, Fail Closed cho Master Data, và Allow Unknown Output đều có bằng chứng chạy thật trên Google Sheet thật, không còn dòng nào dựa trên suy đoán.
+
+**Chưa đóng, không chặn Freeze:** [[Flag — SessionRAM Persistence across WAIT_REVIEW]] — vẫn Open. Đã xác nhận không ảnh hưởng `resolveEffectiveQty()` (chạy cùng execution với GENERATE), nhưng ảnh hưởng tiềm tàng tới toàn bộ nhánh WARNING trong kịch bản thật (Manager duyệt cách xa nhiều giờ). 4 test A-D trong file Flag đó chưa chạy — không cấp bách, theo dõi riêng.
+
+**Ghi nhận, không xử lý ngay:** Idempotency Guard hoạt động đúng thiết kế, gây `FAILED` khi test lại batch cũ trùng Transaction ID với Ledger đã có — hành vi đúng, không phải bug. Quy trình test sau này cần dọn `TRANSACTION_STAGING` + đổi Transaction ID trước khi chạy lại cùng batch, tránh nhầm là lỗi mới.
+
+---
+
 ## Revision History
 
 - **Rev.1** (2026-07-13): Bản gốc — Risk Assessment 3 nhánh (NORMAL/WARNING/CRITICAL), thay thế WAIT_REVIEW bắt buộc cho mọi giao dịch.
 - **Rev.2** (2026-07-13): Chốt WARNING chỉ còn 1 nguồn (PREP_LOG Status Flag), hủy PPV threshold và PRODUCTION_LOG Status Flag mới. Phát hiện Semantic Drift giữa `LOCATION_MASTER` (giả định trong code) và `PLACEMENT_MASTER` (sheet thật) — xác nhận đây là 2 khái niệm khác Domain, không phải lỗi đặt tên.
 - **Rev.3** (2026-07-13): Chốt không tạo `LOCATION_MASTER` khi chưa có Reality chứng minh cần (nguyên tắc "Reality trước, Entity sau" — FOUNDATION-003/004). `VALIDATE_FAIL_INVALID_LOCATION` tạm ngưng trigger thay vì Fail Closed vào một sheet chưa tồn tại trong Reality.
 - **Rev.4 — Final** (2026-07-13): Đóng nốt câu hỏi treo cuối cùng — Thanh tự kiểm tra Google Sheet thật, xác nhận và sửa trực tiếp range formula `PREP_LOG`/`STOCK_INPUT_LOG` (Mục 7). Không còn việc gì cần Thanh xác nhận thêm (Mục 6 trống). Trạng thái spec chuyển Draft → Ready, giao cho Gemini/khung Code triển khai.
+- **Rev.5 — Frozen** (2026-07-14): Coverage Matrix 9/9 (Mục 8), toàn bộ Rule đã Reality Test trên Google Sheet thật. Allow Unknown Output (`resolveEffectiveQty`, batch `DN-PREP-260712-07`) và WARNING Flow routing (LOW YIELD → WAIT_REVIEW → COMMIT → Ledger) đều PASS. Thanh xác nhận Freeze. Flag "SessionRAM Persistence across WAIT_REVIEW" vẫn Open, không chặn Freeze — theo dõi riêng trong `08-REFLECTION/Discovery/`.
 
 ---
 
