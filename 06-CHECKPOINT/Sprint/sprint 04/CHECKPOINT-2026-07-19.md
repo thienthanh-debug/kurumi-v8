@@ -52,6 +52,29 @@ Ban đầu nghi ngờ `RAW-OIL-VCO-001` trong batch `DN-ASSM-260612-001` không 
 
 Kết luận thật: đây là đọc nhầm tầng dữ liệu. `PRODUCTION_COMPILER`/`INVENTORY_LEDGER` ghi từng dòng CONS riêng theo Component (CONS-1-x, CONS-2-x...) — đúng thiết kế, giữ traceability, không nên sum ở tầng này. Việc gộp thật sự xảy ra ở `STOCK_POSITION`, và đã xác nhận trực tiếp: `RAW-OIL-VCO-001` = -1.061,76 g, một dòng duy nhất, cộng dồn đúng tất cả batch. Không có bug. Đóng, không cần sửa Compiler hay Stock Position.
 
+## II.5 PREP_COMPILER — dòng thời gian & trạng thái thật
+
+Nguồn: [[ADR-016 Compiler Never Silences Reality]], [[CHECKPOINT-CHOT-PHIEN-2026-07-14]], Mục II ở trên.
+
+- **2026-07-13 (trước Sprint):** `PREP_COMPILER` là 1 trong chuỗi compiler của Inventory Engine (`PREP_LOG → PREP_COMPILER, PRODUCTION_COMPILER → TRANSACTION_STAGING → INVENTORY_LEDGER`), đang build tuần tự.
+- **2026-07-14 — Bug thật, đã sửa, thành ADR-016:** công thức `=LET(...)` của `PREP_COMPILER` có dòng `IF(status_flag <> "OK"; acc; ...)` — âm thầm lọc bỏ batch WARNING (LOW YIELD/OVER YIELD) trước khi sinh Transaction, khiến nhánh WARNING trong Validation Spec vô nghĩa trên thực tế. Đã sửa: bỏ điều kiện lọc, mọi batch đều compile vào Staging. Đúc kết ADR-016 (trích [[FOUNDATION-007 - What is Reality]]: Compiler không được quyền im lặng bỏ qua sự kiện đã thật sự làm thay đổi Reality; Status Flag chỉ để định tuyến, không để triệt tiêu). ADR ghi rõ: chưa lên Constitution, mới kiểm chứng đúng 1 Compiler, cần lặp lại ở Production/Waste/Transfer trước khi Freeze.
+- **2026-07-17→19 — Bug lặp lại đúng như ADR-016 dự đoán,** nhưng ở `PRODUCTION_COMPILER` (không phải PREP_COMPILER lần này) — xác nhận đúng cảnh báo ADR-016. Đã sửa theo cùng cách.
+- **Bằng chứng Operational Validation của PREP_COMPILER** (đã PASS trước đó, độc lập với Sprint này): Compiler Never Silences Reality đã merge và test; Validation Layer chạy end-to-end; Allow Unknown Output test trên batch PREP; LOW YIELD → WAIT_REVIEW → Approved → Ledger; `INVENTORY_LEDGER` đã nhận batch PREP thật (ví dụ `DN-PREP-260712-07` trong Coverage Matrix); `effectiveQty` không mutate Snapshot.
+
+**Kết luận:** `PREP_COMPILER` đã sửa đúng 1 bug thật (ADR-016), Frozen về mặt xử lý dữ liệu (Operational Validation ✅ PASS) — khác với Architecture Review sâu (Execution Type routing, INLINE/STANDALONE, nested INLINE, Ledger mirror, Stock Position, Cost routing, BOM expansion) mà `PRODUCTION_COMPILER` vừa trải qua trong Mission hôm nay. Chưa có bằng chứng PREP_COMPILER đã qua vòng review kiến trúc cùng mức độ đó. Còn 2 Discovery mở (Compiler Automation, Hierarchy of Prevention — xem Mục I) chưa chặn gì, đang chờ thêm Reality trước khi quyết.
+
+### Current Assessment (bằng chứng hỗ trợ, không thay thế câu hỏi mở ở Mục VIII)
+
+```
+1. Functional Validation      ✅ Closed      — compile PREP_LOG → Staging đúng, bug status_flag đã sửa (ADR-016), Validation Layer đã chứng minh không còn triệt tiêu Reality.
+2. Technical Debt             🟡 Open        — chưa xác định cụ thể (hard-code, công thức dài, đặt tên...) nếu có trong code hiện tại; không ảnh hưởng nguyên lý.
+3. Compiler Automation        🟡 Discovery   — câu hỏi trigger Generate: Manual hay Engine? Không nằm trong logic compile.
+4. Hierarchy of Prevention    ⚪ Discovery   — case Roaster Cashew: PREP_LOG bị sửa sau Snapshot, ngăn ở SOP/Snapshot/Engine/Lock? PREP_COMPILER chỉ đọc Snapshot, không phải lỗi của Compiler.
+5. Compiler Contract          ⚪ Candidate for Standardization — chưa có "Compiler Contract" gom Input/Output/Không-được-làm rõ ràng như Production Compiler vừa làm (Routing, STANDALONE/INLINE, Boundary). Nguyên tắc mới rải rác qua ADR-016, chưa gom thành 1 chuẩn chung cho cả 2 Compiler.
+```
+
+Kết luận đánh giá: về chức năng cốt lõi, PREP_COMPILER đã ổn (bug chính đã sửa và xác thực). Về kiến trúc, còn có thể chuẩn hóa thành Compiler Contract để đồng bộ với Production Compiler — đây là việc chuẩn hóa, không phải sửa lỗi.
+
 ## III. Còn mở — chưa phải Blocker, không chặn Freeze hiện tại
 
 - `inline_yield` là assumption — cần xác nhận `UNIVERSAL_RECIPE_DETAIL` đang normalize theo 1 Batch hay theo Yield Qty. Đây là quyết định mô hình dữ liệu, cần Reality evidence trước khi Freeze.
@@ -113,3 +136,31 @@ Bản nháp trước của Checkpoint này (relay qua GPT) có 1 dòng sai ở M
 1. **Commit 2 file đang chờ** (`Discovery — Hierarchy of Prevention.md`, `Production-Compiler-Execution-Type-Spec-V1.md`) — Xác nhận, đã commit cùng đợt với Checkpoint này.
 2. **Case Roaster Cashew** — Bỏ hẳn, không gộp vào `Flag — Compiler Automation vs Frozen Contract.md`. File đó giữ nguyên nội dung gốc (2026-07-14), không có case này.
 3. **Lưu Checkpoint 2026-07-19** — Xác nhận, lưu tại đúng path đề xuất: `06-CHECKPOINT/Sprint/sprint 04/CHECKPOINT-2026-07-19.md` (file này).
+
+## VIII. Câu hỏi mới mở (2026-07-19) — chưa quyết
+
+**Có mở Mission mới "PREP Compiler Architecture Review" hay không** — song song với 3 mục còn mở của Production Compiler (Mục III), hay chờ đóng 3 mục đó trước? Nếu mở, checklist đề xuất dùng chung với Production Compiler: Execution routing, Yield logic, Ledger mapping, Stock Position, Technical debt, Open experiment (xem bảng Current Assessment ở Mục II.5).
+
+Đây là quyết định Mission Boundary — thuộc Thanh, không tự mở.
+
+## IX. Appendix — Audit Trail
+
+### Case: RAW-OIL-VCO-001 False Positive
+
+```
+Observation
+    ↓
+Hypothesis A — Item Code lệch ký tự ẩn
+    ↓ Rejected (đối chiếu trực tiếp UNIVERSAL_RECIPE_DETAIL, khớp tuyệt đối)
+Hypothesis B — Unit không khớp
+    ↓ Rejected (cả hai dòng CONS đều "g")
+Hypothesis C — Location khác nhau thật
+    ↓ Rejected (cả hai dòng CONS đều DN_RAW)
+Conclusion — Read wrong data layer
+    Ledger/Compiler không sum theo đúng thiết kế (giữ traceability theo Component:
+    CONS-1-x, CONS-2-x, CONS-3-x), bị đọc nhầm thành lỗi "thiếu sum".
+    STOCK_POSITION — tầng gộp thật sự — đã tổng hợp đúng theo (Item Code, Location):
+    RAW-OIL-VCO-001 = -1.061,76 g, một dòng duy nhất.
+```
+
+**Status:** CLOSED — False Positive. Tham chiếu: Mục II ở trên.
