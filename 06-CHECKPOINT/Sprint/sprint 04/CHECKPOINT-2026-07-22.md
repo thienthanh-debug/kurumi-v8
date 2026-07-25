@@ -2,7 +2,7 @@
 
 Bản hợp nhất, thay thế vai trò "checkpoint đang sống" của [[CHECKPOINT-2026-07-19]] (giữ file đó làm mốc lịch sử, không xoá/không sửa). File này tự đầy đủ — không cần đọc chéo 07-19 để hiểu bối cảnh.
 
-Liên quan: [[CHECKPOINT-2026-07-19]], [[CHECKPOINT-CHOT-PHIEN-2026-07-14]], [[ADR-016 Compiler Never Silences Reality]], [[ADR-017 Snapshot ID Format]], [[Validation-Decision-Spec-V1]], [[Production-Compiler-Execution-Type-Spec-V1]], [[Flag — SessionRAM Persistence across WAIT_REVIEW]], [[Flag — Compiler Automation vs Frozen Contract]], [[Discovery — Snapshot Metadata Ownership]], [[Discovery — Boundary Formula vs Engine]], [[Discovery — Truth Mapping V1]], [[Discovery — Hierarchy of Prevention]]
+Liên quan: [[CHECKPOINT-2026-07-19]], [[CHECKPOINT-CHOT-PHIEN-2026-07-14]], [[WASTE-ENGINE-CHECKPOINT-2026-07-22]], [[ADR-016 Compiler Never Silences Reality]], [[ADR-017 Snapshot ID Format]], [[Validation-Decision-Spec-V1]], [[Production-Compiler-Execution-Type-Spec-V1]], [[Flag — SessionRAM Persistence across WAIT_REVIEW]], [[Flag — Compiler Automation vs Frozen Contract]], [[Discovery — Snapshot Metadata Ownership]], [[Discovery — Boundary Formula vs Engine]], [[Discovery — Truth Mapping V1]], [[Discovery — Hierarchy of Prevention]]
 
 ---
 
@@ -114,6 +114,10 @@ Reality Test: Benchmark Generate với quy mô dữ liệu tăng dần (100, 500
 
 Status: 🟡 Discovery — chưa Freeze. Không giả định hướng nào tốt hơn — để Reality Test quyết định. Mỗi Compiler có thể ở boundary khác nhau.
 
+## II.7 Waste Engine — đã tách ra file riêng
+
+Toàn bộ nội dung Waste Engine (bug Unit, Discovery Business Object/`inline_yield`, thiết kế dropdown, Discovery "Multi-Domain Reader") đã chuyển sang [[WASTE-ENGINE-CHECKPOINT-2026-07-22]] để giữ file chính gọn. Waste Engine vẫn chưa phải Mission chính thức đang mở — chỉ đang điều tra thiết kế trước khi build (`WASTE_LOG` đã tồn tại, `WASTE_COMPILER` chưa có).
+
 ## III. Còn mở — chưa phải Blocker
 
 🟢 Mission "Production Compiler ổn định" — **đóng** ở trạng thái Operationally Stable (2026-07-22). Không hoàn hảo — còn Discovery/Technical Debt — nhưng không còn Blocker kiến trúc, không có bug đe dọa Transaction Truth/Ledger.
@@ -122,7 +126,7 @@ Status: 🟡 Discovery — chưa Freeze. Không giả định hướng nào tố
 
 Thứ tự: `Production Compiler (Stable) → Reality Validation → [nếu có Pattern] → Prep Compiler Architecture Review`
 
-- `inline_yield` là assumption — cần xác nhận `UNIVERSAL_RECIPE_DETAIL` đang normalize theo 1 Batch hay theo Yield Qty.
+- `inline_yield` — toàn bộ nội dung đã chuyển sang [[WASTE-ENGINE-CHECKPOINT-2026-07-22]] (Mục 2), vì đây hiện là shared dependency chủ yếu phục vụ thiết kế Waste Engine. Không mở lại Mission Production Compiler để giải quyết — Compiler vẫn giữ Operationally Stable. Tóm tắt: câu hỏi gốc đã sửa từ "Batch hay Yield Qty" (sai khung) sang "Business Object nào" — đã đóng phần lớn bằng dữ liệu thật (`FINAL_PRODUCT_MASTER` có sẵn Business Rule), còn 1 nhánh phụ (Portion Size — 2 tầng độc lập với Yield Qty) đang dùng cho thiết kế dropdown Waste, xem file riêng.
 - `LEFT(c_code;4)` trong Compiler — technical debt, chưa dọn.
 - INLINE lồng INLINE nhiều tầng có thật — bằng chứng vận hành thật (4 case NESTED_INLINE trong `PRODUCTION_COMPILER`, 19-22/06, 3 nhân viên khác nhau, loại trừ lỗi thao tác cá nhân). Compiler chỉ nổ đúng 1 tầng rồi dừng, cảnh báo `NESTED_INLINE_*` ở cột N.
 
@@ -163,7 +167,7 @@ Nhất quán với triết lý hiện có (chỉ nguồn có BOM mới cần Com
 
 - Wiring `Read_Infrastructure.gs` vào main Engine.
 - Resolving SessionRAM Persistence definitively với Reality evidence.
-- Pending ERP modules: Waste Engine, Transfer Engine, Audit Engine, Workshop Engine, Branch Consumption, Sales Engine, POS Integration.
+- Pending ERP modules: Waste Engine (đang điều tra thiết kế, xem [[WASTE-ENGINE-CHECKPOINT-2026-07-22]], chưa chính thức mở Mission build), Transfer Engine, Audit Engine, Workshop Engine, Branch Consumption, Sales Engine, POS Integration.
 - Meta-Architecture (Sprint O4 tentative) — chưa Frozen, chờ Reality validation.
 - Python tooling tại `D:\kurumi\Kurumi_V8\python` cho tự động hóa đọc vault.
 
@@ -172,7 +176,7 @@ Nhất quán với triết lý hiện có (chỉ nguồn có BOM mới cần Com
 - Phạm vi sửa Compiler luôn là công thức Google Sheets (`=LET(...)` ở ô A1 các sheet `*_COMPILER`), KHÔNG phải Apps Script `.gs`. Engine (`.gs`) chỉ đọc dữ liệu đã có sẵn trong `TRANSACTION_STAGING`, không biết gì về `PREP_MASTER`/`Execution Type`.
 - Phân biệt vai trò các tầng: `PRODUCTION_COMPILER`/`INVENTORY_LEDGER` = ghi chi tiết từng dòng theo Component (không sum, giữ traceability). `STOCK_POSITION` = tầng gộp duy nhất, cộng dồn theo (Item Code, Location). Đừng nhầm "không sum ở Ledger" là bug.
 - Knowledge Creation Rule: không viết ADR/tài liệu chính thức cho quyết định INLINE Explosion (recursive hay không) cho tới khi chạy thật + PASS đủ lâu.
-- Mission Boundary: chỉ giải quyết đúng 1 việc tại 1 thời điểm — hiện tại là **"Reality Validation"** (xem Mục III), không phải "Production Compiler ổn định" nữa (đã đóng). Chưa mở WASTE_COMPILER hay Mission nào khác.
+- Mission Boundary: chỉ giải quyết đúng 1 việc tại 1 thời điểm — hiện tại là **"Reality Validation"** (xem Mục III), không phải "Production Compiler ổn định" nữa (đã đóng). Chưa mở WASTE_COMPILER hay Mission nào khác — Mục II.7 chỉ là 1 Discovery/taxonomy quyết định sớm, không phải Mission đã mở.
 - Toàn bộ file Spec/Mission Brief đã gửi Gemini nằm trong lịch sử chat khung cũ — không có trong vault chính thức (file tạm dùng giao việc).
 
 ## VII. Câu hỏi đang treo — chờ Thanh trả lời trực tiếp
