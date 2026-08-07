@@ -1,4 +1,4 @@
-# WASTE ENGINE — Checkpoint riêng (tách từ CHECKPOINT-2026-07-22.md, cập nhật đến 2026-07-29)
+# WASTE ENGINE — Checkpoint riêng (tách từ CHECKPOINT-2026-07-22.md, cập nhật đến 2026-08-04)
 
 Toàn bộ nội dung Waste Engine tách ra khỏi Checkpoint chính để giữ file gốc gọn. Đây là Mission **chưa build** (`WASTE_LOG` đã tồn tại, `WASTE_COMPILER` chưa có) — không phải Mission chính thức đang mở, chỉ đang điều tra thiết kế trước khi build.
 
@@ -385,6 +385,31 @@ FINAL relationship A (Opera): System Unit=WHOLE CAKE=Batch UOM, Portion UOM=pcs�
 
 **Trạng thái hiện tại — đang BLOCKED đúng chỗ, chưa nên nối B/D/E vào TECH:** `RAW`/`PREP` Contract cơ bản PASS (sau khi sửa Domain enum, Master Basis blank). `FINAL` Contract FAIL — cần chốt lại mapping cho từng profile sản phẩm (Batch-based như Opera, Portion-based như Momo, gram-based như Date Truffle) trước khi viết tiếp Strategy/Execution. Đã yêu cầu đúng: dừng, báo cáo cấu trúc cột thật của `FINAL_PRODUCT_MASTER` (Portion Qty/UOM, Yield Qty/UOM, Batch Qty/UOM, Inventory Unit) cho 3 nhóm sản phẩm khác nhau trước khi tự chọn mapping.
 
+**✅ Dữ liệu thật `FINAL_PRODUCT_MASTER` đã quét xong (2026-07-29/30) — xác nhận 3 pattern, không phải 2:**
+
+```
+Nhóm Cake (Opera, Tiramisu, Napoleon): Batch UOM=WHOLE CAKE, Yield Qty=8/12/14, Portion UOM=pcs
+  → khớp Relationship A (đã Freeze ở trên) — Target Unit=Batch UOM, Basis=Yield Qty
+
+Nhóm Bowl/Plate (Momo dạng bowl, breakfast plate): Portion UOM=Batch UOM (bowl/plate, giống nhau), Yield Qty=1
+  → không cần quy đổi, IDENTITY
+
+Nhóm Gram/Pcs (Date Truffle, Peanut Ball, Momo Dumplings): Portion Size=35g/50g (theo gram)
+  nhưng Batch UOM=PCS, Yield Qty=60/38 (đếm theo mẻ)
+  → 🟡 KHÔNG khớp gọn Relationship A hay B đã Freeze — cần Thanh phân tích thêm:
+     là Relationship C mới, hay mapping khác theo từng Category?
+```
+
+**Chưa tự chọn mapping cho nhóm thứ 3** — đúng kỷ luật, dừng lại chờ Thanh quyết thay vì đoán.
+
+**✅ `CONVERSION_FACADE` — pattern Staging/Published mới, đã verify bằng mutation test (2026-07-30):** Tách `CONVERSION_FACADE_STAGING` (candidate, được sửa tự do) khỏi `CONVERSION_FACADE` (Published Snapshot, Engine chỉ đọc từ đây). Verify: đổi Factor ở Staging → Published không đổi → Engine vẫn dùng giá trị cũ → Test vẫn PASS. Đây là defensive pattern tốt — cho phép thử nghiệm/sửa dữ liệu candidate mà không ảnh hưởng Engine đang chạy sống.
+
+**✅ `CONVERSION_FACADE_VALIDATION` — Validation Gate cho Facade, cùng mẫu ADR-019 (Gatekeeper) áp cho tầng khác:** 11 mã lỗi theo thứ tự ưu tiên (`MISSING_FIELD` → `UNKNOWN_ITEM` → `DOMAIN_MISMATCH` → `INVALID_SOURCE/TARGET_UNIT` → `FACTOR_NOT_NUMERIC/NON_POSITIVE` → `IDENTITY_FACTOR_MISMATCH` → `EXACT/CONFLICTING_DUPLICATE` → `VALID`). Overall Decision chỉ 2 trạng thái: `PASS`/`CRITICAL_REJECT`, không có `WARNING`/`PARTIAL PASS` — Fail-Closed nhất quán.
+
+**🐛 Bug đã bắt bằng mutation test có kiểm soát — cùng loại lỗi Gatekeeper đã gặp trước đây:** "Candidate Row" ban đầu chỉ check `Item Code` non-blank để xác định dòng có tồn tại hay không — nghĩa là 1 dòng **thiếu chính Item Code** (đáng lẽ phải bị bắt `MISSING_FIELD`) lại biến mất hoàn toàn khỏi Validation, khiến `Overall Decision` có thể trả `PASS` giả trong khi có dòng lỗi Critical bị bỏ sót. Đã sửa: Candidate Row = có ít nhất 1 field trong A:E chứa dữ liệu (không chỉ riêng Item Code). Xác nhận bằng controlled mutation (chèn dòng thiếu Item Code, verify đúng ra `MISSING_FIELD`/`CRITICAL_REJECT`, rồi restore).
+
+**🔴 Bài học Governance quan trọng (2026-08-03) — Gemini từng báo `BUILD_PASS` hoàn toàn bịa (Phase D.6C.3):** báo cáo chi tiết, số liệu cụ thể (363 candidates, 5 seed edge khớp...) nhưng khi đòi đọc lại công thức thật (`D.6C.3A`), xác nhận **sheet `CONVERSION_FACADE_COMPILER` chưa từng được tạo** — toàn bộ là văn bản mô phỏng. Sửa đúng: `D.6C.3R-1` bắt tạo physical shell trước, đọc lại workbook thật, cho phép trả `TOOL_EXECUTION_UNAVAILABLE` thay vì bịa PASS. **Áp dụng cho toàn team:** mọi báo cáo "PASS"/"BUILD_PASS"/"FREEZE" từ Gemini cần bước xác minh độc lập (đọc code/data thật, hoặc ảnh chụp Execution Log trực tiếp) trước khi tin.
+
 **✅ `UNIT_DICTIONARY` — Master Data mới xuất hiện, 3 tầng rõ ràng (2026-07-29):**
 
 ```
@@ -400,6 +425,87 @@ Lookup chuyển từ VLOOKUP sang XLOOKUP (không phụ thuộc vị trí cột,
 **✅ Header đổi tên khớp Contract đã thống nhất:** `Unit 1/Unit 2` → `Source Unit/Target Unit`; `Conversion Basis/Final Conversion Basis` → `Master Basis/Applied Basis` (khớp đúng thuật ngữ đã Freeze ở phần đầu Mục 8.5).
 
 **✅ Tuyên bố đóng băng thiết kế, chuyển trọng tâm sang verification (2026-07-29):** Từ đây không thêm cột nếu chưa có ADR mới, không đổi tên cột vì sở thích, không sửa `UNIT_DICTIONARY` nếu không ảnh hưởng Contract. Trọng tâm chuyển sang: hoàn thiện công thức Normalizer → chạy toàn bộ Acceptance Test → kiểm thử edge case (UNKNOWN/IDENTITY/LINEAR/DISCRETE) → chỉ sửa kiến trúc nếu có test FAIL, không tự tinh chỉnh thêm.
+
+**✅ Implement thật — `ConversionFacadeCompiler.gs` (Apps Script, PHASE D.6C.3R), Preflight + Build PASS (2026-07-29):** Đây là bản implement thật của thiết kế Strategy-based Normalizer/`ITEM_METADATA` ở trên, tên chính thức khi lên production: `CONVERSION_FACADE_COMPILER` (sheet output), đọc từ `LIST_ITEM`, `PREP_MASTER`, `ITEM_REGISTRY`, `UNIT_DICTIONARY`, `CONVERSION_EXPLICIT_RULE` (Master Data nguồn).
+
+Qua nhiều vòng static review trước Preflight (không chạy function khi còn nghi vấn contract), sửa đúng 5 lỗi:
+- RAW/PREP Review Code phải blank khi READY (không ghi chữ "READY" vào cột Review Code, đúng contract `Compile Status = READY, Review Code = blank`).
+- Header duplicate check chỉ soi `requiredHeaders`, không block vì cột không liên quan trùng tên (ví dụ 2 cột `Notes` khác nhau trong `LIST_ITEM`).
+- 5 Seed Result phải tự kiểm tra cả `Domain` (RAW/PREP/FINAL), không dựa suy luận gián tiếp qua Registry validation.
+- Bỏ điều kiện dư (`readyRows.length === 363` lặp 2 lần trong `isBaselineValid`).
+- `brownRiceBatchEdgeFound` quét toàn bộ candidate bất kể status (không chỉ `READY`) — để chuẩn bị cho fault injection sau này không bị che khuất BATCH edge bị REJECT.
+
+**Kết quả Build thật (2026-07-29):**
+```
+Preflight                 PASS (READY_TO_BUILD, 363/363, 5 seed đều true)
+Compiler Build            PASS
+status                    BUILT, snapshotVerified: true
+Diagnostic (A2:I364)      363 dòng, Compile Status=READY, Review Code=blank, cột J (separator) trống
+Ready Projection (K2:O364) 363 dòng
+REQUIRES_REVIEW / REJECT  0 / 0
+Brown Rice obsolete edge  absent
+```
+
+**Chưa Freeze, chưa Generate Snapshot, chưa Publish.** Bước tiếp theo: fault injection có kiểm soát — bắt đầu với 1 lỗi Explicit Rule (`INVALID_RULE_STATUS`), sau đó phục hồi dữ liệu và xác nhận Preflight quay lại đúng `READY_TO_BUILD`.
+
+**✅ `CONVERSION_FACADE_COMPILER` — Build hoàn tất, đã test toàn diện bằng Fault Injection Suite thật, xác nhận qua Claude in Chrome + Apps Script Execution Log (2026-08-04/05):**
+
+```
+Compiler static review        PASS
+Baseline preflight            PASS  (363 READY, 0 REQUIRES_REVIEW, 0 REJECT)
+Fault injection suite         PASS  (đủ các nhánh Validation Code chính)
+Baseline restoration          PASS  (mỗi test đều restore về đúng baseline trước khi qua test tiếp)
+Final physical build          PASS  (K:O = 363 dòng, snapshotVerified=true, readback xác nhận thật)
+```
+
+- **FINAL cần Explicit Profile (Architecture Decision B)** — RAW/PREP đủ dữ liệu tự động compile (Deterministic), nhưng FINAL có 3+ pattern khác nhau (Cake/Bowl-Plate/Gram-Pcs) nên **không đoán bằng Category** — bắt buộc khai báo tường minh qua `CONVERSION_EXPLICIT_RULE`. Đây chính là hướng giải quyết "pattern thứ 3" (Date Truffle) đã Flag trước đó.
+
+**Các mã lỗi đã Fault-Test thật (baseline→inject→verify→restore, không chỉ đọc code):**
+
+| Mã lỗi | Kết quả |
+|---|---|
+| `INVALID_RULE_STATUS` | REJECT — đúng 1 candidate (CER-0001, PREP-COO-CBR-001 KG→G) |
+| `MISSING_ITEM_CODE` | REJECT — đúng 1 candidate (CER-0002), `finMomo=false` |
+| `ITEM_NOT_FOUND` | REJECT — đúng 1 candidate, seed khác không đổi |
+| `INVALID_TARGET_UNIT` | REJECT — đúng contract |
+| `DUPLICATE_DICTIONARY_KEY` | **REQUIRES_REVIEW** (không phải REJECT) — 2 item cùng trỏ 1 Canonical Unit, đúng rule đã chốt ở `D.6C.2` |
+
+Mỗi test đều tự nhất quán nội bộ (readyRows/uniqueCoveredItems/finalCovered giảm đúng số lượng candidate bị ảnh hưởng), không có số liệu lệch pha.
+
+**Xác nhận quan trọng:** thay đổi vận hành nút bấm cho `PREP_LOG`/`WASTE_LOG` (Leader-triggered orchestration, xem [[ADR-022 Log as Input Buffer with Leader-Triggered Orchestration]]) **không làm mất giá trị Compiler này** — đây là lớp orchestration khác, nằm phía trên Engine, không đụng tới.
+
+**🟡 Còn treo — Phase Snapshot Boundary, CHƯA viết Generate Snapshot:**
+
+```
+CONVERSION_FACADE_COMPILER K:O (values-only)
+→ Generate Snapshot
+→ CONVERSION_FACADE_STAGING
+→ CONVERSION_FACADE_VALIDATION
+→ Manual Publish
+```
+
+3 audit read-only bắt buộc trước khi viết hàm Generate Snapshot:
+1. Verify lại `K2:O` thật có đúng 363 dòng, không composite-key duplicate (không tin số cũ, tự kiểm lại).
+2. `CONVERSION_FACADE_STAGING` hiện đang giống Published hay có chỉnh sửa chưa publish (dirty)?
+3. **Generate Snapshot phải BLOCK nếu Staging đang dirty** — không được âm thầm ghi đè công việc đang chờ duyệt.
+
+**✅✅ FREEZE RECORD — Phase D.6C, chính thức đóng băng (2026-08-05, Freeze Authority: Thanh):**
+
+```
+Phase: D.6C — Canonical Conversion Facade Compiler
+Version: D.6C v1.0
+Final Status: FROZEN — IMPLEMENTED_AND_TESTED
+```
+
+**Phạm vi đã Freeze:** `CONVERSION_EXPLICIT_RULE`, `CONVERSION_FACADE_COMPILER`, source boundary (`LIST_ITEM`/`PREP_MASTER`/`ITEM_REGISTRY`/`UNIT_DICTIONARY`/`CONVERSION_EXPLICIT_RULE`), Unit resolution (`UPPER(TRIM(Unit))`), RAW/PREP native identity adapter, Explicit conversion adapter, Validation precedence, Composite key (`Item Code + Source Canonical Unit`), Exact duplicate/conflicting candidate handling, Diagnostic A:I, Ready Projection K:O, `preflightConversionFacadeCompiler()`, `buildConversionFacadeCompiler()`, Lock/backup/readback verification/rollback, REJECT/REQUIRES_REVIEW diagnostic reporting.
+
+**Baseline đóng băng:** `363 candidates, 363 READY, 0 REQUIRES_REVIEW, 0 REJECT, 362 unique items (RAW 188/PREP 172/FINAL 2), Brown Rice BATCH edge ABSENT, Snapshot Verified TRUE`.
+
+**⚠️ Ghi chú nguồn minh bạch — không lẫn lộn mức độ chứng kiến:** Fault Suite liệt kê 17 mã lỗi đã PASS (`INVALID_RULE_STATUS, DUPLICATE_RULE_ID, MISSING_RULE_ID, MISSING_ITEM_CODE, ITEM_NOT_FOUND, INVALID_DOMAIN, MISSING_SOURCE_UNIT, INVALID_SOURCE_UNIT, MISSING_TARGET_UNIT, INVALID_TARGET_UNIT, MISSING_FACTOR, NON_NUMERIC_FACTOR, NON_POSITIVE_FACTOR, DUPLICATE_DICTIONARY_KEY, AMBIGUOUS_DICTIONARY_MAPPING, EXACT_DUPLICATE_CANDIDATE, CONFLICTING_CANDIDATE`). Trong đó **5 mã đã chứng kiến trực tiếp bằng chứng cụ thể** (ảnh Execution Log/Claude in Chrome: `INVALID_RULE_STATUS, MISSING_ITEM_CODE, ITEM_NOT_FOUND, INVALID_TARGET_UNIT, DUPLICATE_DICTIONARY_KEY`) — **12 mã còn lại chỉ thấy trong kế hoạch test (`D.6C.3`), chưa thấy bằng chứng kết quả cụ thể trong phiên này.** Không ảnh hưởng tính hợp lệ của Freeze (Thanh có toàn quyền dựa trên bằng chứng đã xác nhận ở khung chat khác) — chỉ ghi rõ nguồn để Checkpoint chính xác.
+
+**Không nằm trong Freeze này (đúng khớp câu hỏi còn treo đã ghi):** Generate Snapshot (Compiler→Staging), Dirty-Staging guard, `CONVERSION_FACADE_VALIDATION`, Publish sang `CONVERSION_FACADE`, nút xử lý `PREP_LOG`/`WASTE_LOG`, luồng clear input sau verified commit.
+
+**Quy tắc từ nay:** không sửa trực tiếp D.6C — mọi thay đổi phải mở revision mới (`D.6C-R2 — Change Request`).
 
 ## Bug Queue — giao Gemini xử lý, KHÔNG chặn Resolver Architecture
 
@@ -514,5 +620,7 @@ Lookup chuyển từ VLOOKUP sang XLOOKUP (không phụ thuộc vị trí cột,
 11. **Cần Thanh xác nhận:** bug Staff/Branch lệch cột tui tìm ra ở phiên bản formula trước — vẫn không thấy nhắc tới trong cả V5 lẫn trace V6 (dù trace V6 đọc thẳng công thức `TECH_UNIT_DROPDOWN` rất chi tiết). Cần dán nguyên văn formula mới nhất để đối chiếu trực tiếp, không suy đoán thêm.
 12. Contract D/E cho Normalizer (Mục 8.5 — Unit 2, Ambiguous Fail-closed) mới chỉ là thiết kế đã khóa trên giấy — kế hoạch build/test (Opera + Momo + Stroganoff + 1 RAW + 1 FINAL lỗi) chưa chạy thật.
 13. Cả 4 ADR mới (018-021) mới dừng ở thiết kế/Freeze trên giấy — chưa có bằng chứng `WASTE_COMPILER` thật đã chạy qua pipeline `WASTE_LOG → Gatekeeper → ACTIVE_WASTE_EVENTS → TECH → Resolver → Compiler` đầy đủ.
-14. TECH V2 Strategy-based Normalizer (Mục 8.5) — `RAW`/`PREP` Contract PASS, nhưng **`FINAL` Contract đang FAIL** (`ITEM_METADATA` chỉ lưu 1 cặp Target/Basis, không đủ biểu diễn quan hệ 2 tầng của Opera). Đang chờ báo cáo cấu trúc cột thật `FINAL_PRODUCT_MASTER` cho 3 nhóm sản phẩm (Batch-based/Portion-based/gram-based) trước khi tự chọn mapping.
-15. **Mới:** `UNIT_DICTIONARY` — phân biệt `PORTION` (business/serving concept) vs `CONTAINER` (plate/bowl vật lý) mới chỉ chấp nhận tạm cho phạm vi Waste, chưa chốt dứt điểm — cần xét lại nếu `UNIT_DICTIONARY` mở rộng thành Master dùng chung toàn ERP. Thiết kế Waste Engine tuyên bố đóng băng (2026-07-29) — trọng tâm chuyển sang chạy Acceptance Test thật.
+14. ✅✅ **FROZEN (2026-08-05)** — Phase D.6C (`CONVERSION_FACADE_COMPILER`, TECH V2 Strategy-based Normalizer) chính thức đóng băng, Freeze Authority: Thanh. Baseline: 363/363 READY, 0 REQUIRES_REVIEW/REJECT, Fault Injection Suite PASS (5/17 mã lỗi chứng kiến trực tiếp bằng Execution Log, 12 mã còn lại chỉ có trong kế hoạch test). Xem Mục 8.5. **Ngoài phạm vi Freeze này, vẫn còn treo:** Generate Snapshot (Compiler→Staging), Dirty-Staging guard, `CONVERSION_FACADE_VALIDATION` áp dụng thật, Publish sang `CONVERSION_FACADE`. Thay đổi thêm phải qua revision mới (`D.6C-R2`), không sửa trực tiếp.
+15. `UNIT_DICTIONARY` — phân biệt `PORTION` (business/serving concept) vs `CONTAINER` (plate/bowl vật lý) mới chỉ chấp nhận tạm cho phạm vi Waste, chưa chốt dứt điểm — cần xét lại nếu `UNIT_DICTIONARY` mở rộng thành Master dùng chung toàn ERP. Thiết kế Waste Engine tuyên bố đóng băng (2026-07-29) — trọng tâm chuyển sang chạy Acceptance Test thật.
+16. Nhóm 3 FINAL (Gram/Pcs — Date Truffle, Peanut Ball, Momo Dumplings: Portion Size theo gram nhưng Batch UOM=PCS) không khớp gọn Relationship A/B đã Freeze — cần Thanh quyết: Relationship C mới, hay mapping riêng theo Category? Đã giải quyết tạm bằng Architecture Decision B (FINAL bắt buộc khai báo qua `CONVERSION_EXPLICIT_RULE`, không đoán tự động), nhưng câu hỏi phân loại gốc vẫn chưa có câu trả lời chính thức.
+17. **Mới:** Phase D.7 (Log as Input Buffer/Leader-triggered Orchestration, [[ADR-022 Log as Input Buffer with Leader-Triggered Orchestration]]) chính thức kick off (2026-08-05) — D.7A Read-only audit đang chạy, D.7C làm `PREP_LOG` trước, `WASTE_LOG` (D.7E) chỉ áp dụng sau khi pattern PREP đã chứng minh đúng. Chưa viết code.

@@ -62,6 +62,36 @@ Khi mở Freeze Checklist cho bất kỳ Mission nào, phải có bảng Freeze 
 
 ---
 
+## 5. Rule — IT Decision Authority (không bắt Thanh quyết chi tiết kỹ thuật thuần IT)
+
+Trước một quyết định ảnh hưởng tới Freeze, AI phải giải thích bằng ngôn ngữ vận hành:
+
+```
+Đang khóa điều gì?
+Nó thay đổi gì ngoài đời?
+Nếu đổi sau này thì ảnh hưởng gì?
+```
+
+Nếu chỉ là cách máy xử lý bên trong, và:
+
+```
+đã test tốt
++ an toàn
++ fail-closed
++ có khả năng phục hồi phù hợp
++ không thay đổi ý nghĩa nghiệp vụ đã chốt
+```
+
+→ Claude/GPT **có quyền tự quyết và tự đóng kỹ thuật**, không cần hỏi Thanh.
+
+**Chỉ đưa Thanh quyết khi thay đổi:** cách bếp vận hành, cách tính cost, ý nghĩa tồn kho, ý nghĩa dữ liệu, quyền staff, business workflow, hoặc một business rule thật.
+
+**Vocabulary trạng thái hợp lệ:** `OPEN`, `CLOSED`/`PASS`, `BLOCKED`, `FAIL`. Không dùng trạng thái tự phát như `TECHNICALLY LOCKED` — "AI được quyền tự khóa kỹ thuật" là **quyền quyết định**, không phải một status mới cần định nghĩa riêng.
+
+---
+
 ## Nguồn gốc
 
-Cả 4 mục trên đều sinh ra từ Discovery thật trong Sprint Validation Engine (2026-07-13 → 14), không phải thiết kế trước — đúng tinh thần Mục 3. Xem [[CHECKPOINT-CHOT-PHIEN-2026-07-14]] và các Discovery trong `08-REFLECTION/Discovery/` ([[Discovery — Truth Mapping V1]], [[Flag — SessionRAM Persistence across WAIT_REVIEW]], [[Flag — Compiler Automation vs Frozen Contract]]) để biết bối cảnh từng rule sinh ra từ va chạm nào.
+Mục 1-4 sinh ra từ Discovery thật trong Sprint Validation Engine (2026-07-13 → 14), không phải thiết kế trước — đúng tinh thần Mục 3. Xem [[CHECKPOINT-CHOT-PHIEN-2026-07-14]] và các Discovery trong `08-REFLECTION/Discovery/` ([[Discovery — Truth Mapping V1]], [[Flag — SessionRAM Persistence across WAIT_REVIEW]], [[Flag — Compiler Automation vs Frozen Contract]]) để biết bối cảnh từng rule sinh ra từ va chạm nào.
+
+Mục 5 sinh ra từ Phase D.7C (2026-08-07) — Reality ép buộc: bắt Thanh quyết mọi chi tiết kỹ thuật thuần IT (contract nội bộ resolver, cấu trúc index RAM...) làm chậm tiến độ không cần thiết, trong khi các quyết định đó không đổi ý nghĩa nghiệp vụ đã chốt. Xem checkpoint kỹ thuật gốc trong `06-CHECKPOINT/Sprint/sprint 04/`.
