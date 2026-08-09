@@ -1,8 +1,8 @@
-# CHECKPOINT — bắt đầu 2026-07-19, cập nhật đến 2026-08-07
+# CHECKPOINT — bắt đầu 2026-07-19, cập nhật đến 2026-08-09
 
 Bản hợp nhất, thay thế vai trò "checkpoint đang sống" của [[CHECKPOINT-2026-07-19]] (giữ file đó làm mốc lịch sử, không xoá/không sửa). File này tự đầy đủ — không cần đọc chéo 07-19 để hiểu bối cảnh.
 
-Liên quan: [[CHECKPOINT-2026-07-19]], [[CHECKPOINT-CHOT-PHIEN-2026-07-14]], [[WASTE-ENGINE-CHECKPOINT-2026-07-22]], [[D7C-PREP-INVENTORY-CHECKPOINT-2026-08-07]], [[ADR-016 Compiler Never Silences Reality]], [[ADR-017 Snapshot ID Format]], [[ADR-018 Waste Event ID Format]], [[ADR-022 Log as Input Buffer with Leader-Triggered Orchestration]], [[Validation-Decision-Spec-V1]], [[Production-Compiler-Execution-Type-Spec-V1]], [[Flag — SessionRAM Persistence across WAIT_REVIEW]], [[Flag — Compiler Automation vs Frozen Contract]], [[Discovery — Snapshot Metadata Ownership]], [[Discovery — Boundary Formula vs Engine]], [[Discovery — Truth Mapping V1]], [[Discovery — Hierarchy of Prevention]]
+Liên quan: [[CHECKPOINT-2026-07-19]], [[CHECKPOINT-CHOT-PHIEN-2026-07-14]], [[WASTE-ENGINE-CHECKPOINT-2026-07-22]], [[D7C-PREP-INVENTORY-CHECKPOINT-2026-08-07]], [[D7C3-WASTE-BUTTON-ORCHESTRATION-CHECKPOINT-2026-08-09]], [[ADR-016 Compiler Never Silences Reality]], [[ADR-017 Snapshot ID Format]], [[ADR-018 Waste Event ID Format]], [[ADR-022 Log as Input Buffer with Leader-Triggered Orchestration]], [[Validation-Decision-Spec-V1]], [[Production-Compiler-Execution-Type-Spec-V1]], [[Flag — SessionRAM Persistence across WAIT_REVIEW]], [[Flag — Compiler Automation vs Frozen Contract]], [[Discovery — Snapshot Metadata Ownership]], [[Discovery — Boundary Formula vs Engine]], [[Discovery — Truth Mapping V1]], [[Discovery — Hierarchy of Prevention]]
 
 ---
 
@@ -202,6 +202,16 @@ D.7C-1G Source Event Finalization      🚩 Evidence Gap — báo CLOSED/PASS nh
 ```
 
 Phase D.7C sinh ra Rule mới quan trọng: [[Governance-Protocol]] Mục 5 — IT Decision Authority (không bắt Thanh quyết chi tiết kỹ thuật thuần IT, Claude/GPT tự quyết/tự đóng nếu không đổi ý nghĩa nghiệp vụ đã chốt). Next action: chạy read-only `test_D7C_1G_FinalizationEvidenceAudit()` để đóng đúng Evidence Gap trước khi coi D.7C-1G là nền vững cho phase kế tiếp.
+
+**✅ Cập nhật tiến độ (2026-08-09) — D.7C-3 (WASTE_LOG Button Orchestration) đã bắt đầu, nhân bản pattern từ D.7C PREP_LOG, chi tiết đầy đủ ở [[D7C3-WASTE-BUTTON-ORCHESTRATION-CHECKPOINT-2026-08-09]]:**
+
+```
+D.7C-3A-2  Waste Identity + Domain Router Build   CLOSED / PASS
+D.7C-3B    Waste Logic Orchestrator               CLOSED / PASS
+D.7C-3C    Bind Button + Operator Feedback        PASS (build) / IN PROGRESS (data)
+```
+
+3/11 event Waste thật đã hoàn tất trọn vòng đời (archive+clear+finalize) không double-write. 3 event khác đang bị chặn `UNIT_CONVERSION_FAILED` (1 code bug canonicalization + thiếu Conversion Rule) — dừng đúng lúc trước khi ghi sai, chưa chạm Staging. **Đang chờ chạy `D.7C-3C-INCIDENT-PATCH-3`** (đã AUTHORIZED, chưa có kết quả) trước khi tiếp tục Batch cho các event còn lại.
 
 ## II.6 Discovery — Boundary Formula vs Engine
 
